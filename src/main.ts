@@ -26,6 +26,12 @@ async function bootstrap() {
     }),
   );
 
+  app.enableCors({
+    origin: 'http://localhost:5173', // Allow only your frontend's domain
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // Allow cookies or authorization headers if needed
+  });
+
   await app.listen(3000);
 }
 bootstrap();

@@ -25,7 +25,7 @@ export class Order {
   @Column({ nullable: true })
   title: string;
 
-  @Column()
+  @Column({ unique: true })
   pId: number;
 
   @Column()

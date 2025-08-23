@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order } from './entities/order.entity';
@@ -15,23 +19,64 @@ export class OrderService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(data: CreateOrderDto) {
+  async create(data: CreateOrderDto, userId: number) {
     const user = await this.userRepository.findOne({
-      where: { id: data.userId },
+      where: { id: userId },
     });
 
     if (!user) {
-      throw new NotFoundException(`User with ID ${data.userId} not found`);
+      throw new NotFoundException(`User with ID ${userId} not found`);
     }
 
-    const order = this.orderRepository.create({ ...data, user });
-    return await this.orderRepository.save(order);
+    const latestOrder = await this.orderRepository.findOne({
+      where: {},
+      order: { pId: 'DESC' },
+    });
+
+    let nextPId = (Number(latestOrder?.pId) || 0) + 1;
+
+    // Calculate financial year
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth(); // 0 = Jan, 3 = April
+    const financialYear =
+      currentMonth >= 3
+        ? `${currentYear}-${currentYear + 1}`
+        : `${currentYear - 1}-${currentYear}`;
+
+    const order = this.orderRepository.create({
+      ...data,
+      user,
+      pId: nextPId,
+      financialYear,
+    });
+
+    return {
+      message: 'Order created successfully',
+      data: await this.orderRepository.save(order),
+    };
   }
 
-  async findAll() {
-    return await this.orderRepository.find({
-      relations: ['user', 'orderLabels', 'orderAttachments', 'orderChats'],
-    });
+  async findAll({ search }: { search?: string }) {
+    const query = this.orderRepository
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.user', 'user')
+      .leftJoinAndSelect('order.orderLabels', 'orderLabels')
+      .leftJoinAndSelect('order.orderAttachments', 'orderAttachments')
+      .leftJoinAndSelect('order.orderChats', 'orderChats');
+
+    if (search) {
+      query.andWhere(
+        `(order.title ILIKE :search OR 
+        CAST(order.pId AS TEXT) ILIKE :search OR 
+        order.financialYear ILIKE :search OR 
+        order.status ILIKE :search OR 
+        order.description ILIKE :search)`,
+        { search: `%${search}%` },
+      );
+    }
+
+    return await query.getMany();
   }
 
   async findOne(id: number) {
@@ -47,27 +92,21 @@ export class OrderService {
     return order;
   }
 
-  async update(id: number, data: UpdateOrderDto) {
-    const order = await this.orderRepository.findOne({ where: { id } });
+  async update(orderId: number, data: UpdateOrderDto, userId: number) {
+    const order = await this.orderRepository.findOne({
+      where: { id: orderId },
+      relations: ['user'],
+    });
 
     if (!order) {
-      throw new NotFoundException(`Order with ID ${id} not found`);
+      throw new NotFoundException(`Order with ID ${orderId} not found`);
     }
 
-    if (data.userId) {
-      const user = await this.userRepository.findOne({
-        where: { id: data.userId },
-      });
-
-      if (!user) {
-        throw new NotFoundException(`User with ID ${data.userId} not found`);
-      }
-
-      order.user = user;
+    if (order.user.id !== userId) {
+      throw new ForbiddenException('You are not allowed to update this order');
     }
 
     Object.assign(order, data);
-
     return await this.orderRepository.save(order);
   }
 

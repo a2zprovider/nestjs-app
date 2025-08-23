@@ -55,8 +55,38 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
-  async findAll() {
-    return await this.userRepository.find();
+  async findAll({
+    search,
+    page,
+    limit,
+  }: {
+    search?: string;
+    page: number;
+    limit: number;
+  }) {
+    const query = this.userRepository.createQueryBuilder('user');
+    query.where('user.role = :role', { role: 'user' });
+    if (search) {
+      query.andWhere('user.name ILIKE :search OR user.email ILIKE :search', {
+        search: `%${search}%`,
+      });
+    }
+
+    // Pagination
+    query.skip((page - 1) * limit).take(limit);
+
+    // Optional: Order by created date
+    query.orderBy('user.createdAt', 'DESC');
+
+    const [users, total] = await query.getManyAndCount();
+
+    return {
+      data: users,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async findOne(id: number) {

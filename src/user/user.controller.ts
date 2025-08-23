@@ -7,6 +7,7 @@ import {
   Put,
   UseGuards,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -27,8 +28,16 @@ export class UserController {
 
   @Get()
   @Roles('admin')
-  findAll() {
-    return this.userService.findAll();
+  findAll(
+    @Query('search') search?: string,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ) {
+    return this.userService.findAll({
+      search,
+      page: Number(page),
+      limit: Number(limit),
+    });
   }
 
   @Get(':id')
