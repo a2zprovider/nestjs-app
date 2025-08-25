@@ -61,6 +61,7 @@ export class OrderService {
     const query = this.orderRepository
       .createQueryBuilder('order')
       .leftJoinAndSelect('order.user', 'user')
+      .leftJoinAndSelect('order.orderClient', 'orderClient')
       .leftJoinAndSelect('order.orderLabels', 'orderLabels')
       .leftJoinAndSelect('order.orderAttachments', 'orderAttachments')
       .leftJoinAndSelect('order.orderChats', 'orderChats');
@@ -82,7 +83,13 @@ export class OrderService {
   async findOne(id: number) {
     const order = await this.orderRepository.findOne({
       where: { id },
-      relations: ['user', 'orderLabels', 'orderAttachments', 'orderChats'],
+      relations: [
+        'user',
+        'orderClient',
+        'orderLabels',
+        'orderAttachments',
+        'orderChats',
+      ],
     });
 
     if (!order) {
@@ -107,7 +114,11 @@ export class OrderService {
     }
 
     Object.assign(order, data);
-    return await this.orderRepository.save(order);
+
+    return {
+      message: 'Order updated successfully',
+      data: await this.orderRepository.save(order),
+    };
   }
 
   async delete(id: number) {

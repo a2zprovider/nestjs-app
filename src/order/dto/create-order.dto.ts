@@ -1,4 +1,12 @@
-import { IsNotEmpty, IsString, IsNumber, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsNotEmpty,
+  IsString,
+  IsNumber,
+  IsOptional,
+  ValidateNested,
+} from 'class-validator';
+import { CreateOrderClientDto } from 'src/orderClient/dto/create-orderclient.dto';
 
 export class CreateOrderDto {
   // @IsNotEmpty()
@@ -19,4 +27,31 @@ export class CreateOrderDto {
 
   @IsOptional()
   description: string;
+
+  @IsOptional()
+  category: string;
+
+  @IsOptional()
+  orderDate: Date;
+
+  @IsOptional()
+  startDate: Date;
+
+  @IsOptional()
+  deadlineDate: Date;
+
+  @IsOptional()
+  price: number;
+
+  @IsOptional()
+  priceTerms: string;
+
+  @IsOptional()
+  termsCondition: string;
+  
+  @IsOptional()
+  source: string;
+
+  @IsOptional()
+  orderClient: any;
 }

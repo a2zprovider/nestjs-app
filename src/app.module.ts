@@ -7,6 +7,7 @@ import { OrderModule } from './order/order.module';
 import { AuthModule } from './auth/auth.module';
 import { OrderLabelModule } from './orderLabel/orderLabel.module';
 import { OrderAttachmentModule } from './orderAttachment/orderAttachment.module';
+import { OrderClientModule } from './orderClient/orderClient.module';
 import { OrderChatModule } from './orderChat/orderChat.module';
 
 @Module({
@@ -26,6 +27,7 @@ import { OrderChatModule } from './orderChat/orderChat.module';
     OrderModule,
     OrderLabelModule,
     OrderAttachmentModule,
+    OrderClientModule,
     OrderChatModule,
   ],
   controllers: [AppController],

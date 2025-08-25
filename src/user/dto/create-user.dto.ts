@@ -28,6 +28,14 @@ export class CreateUserDto {
   })
   @IsNotEmpty()
   readonly password: string;
+  
+  @IsOptional()
+  @IsString()
+  whatsapp: string;
+  
+  @IsOptional()
+  @IsString()
+  mobile: string;
 
   @IsOptional()
   @IsIn(['user', 'admin'], {

@@ -3,20 +3,25 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToOne,
 } from 'typeorm';
 
 @Entity()
-export class User {
+export class OrderClient {
   @PrimaryGeneratedColumn()
   id: number;
+  
+  @OneToOne(() => Order, (order) => order.orderClient) // <-- Corrected inverse side
+  order: Order;
 
   @Column()
   name: string;
 
-  @Column({ unique: true })
+  @Column({ nullable: true })
   email: string;
 
   @Column({ nullable: true })
@@ -25,17 +30,20 @@ export class User {
   @Column({ nullable: true })
   whatsapp: string;
 
-  @Column()
-  password: string;
+  @Column({ nullable: true })
+  address: string;
 
-  @Column({ default: 'user' }) // roles: 'user', 'admin'
-  role: string;
+  @Column({ nullable: true })
+  city: string;
 
-  @Column({ default: 'active' }) // status: 'active', 'inactive', 'banned', etc.
-  status: string;
+  @Column({ nullable: true })
+  state: string;
 
-  @OneToMany(() => Order, (order) => order.user)
-  orders: Order[];
+  @Column({ nullable: true })
+  country: string;
+
+  @Column({ nullable: true })
+  gstNumber: string;
 
   @CreateDateColumn()
   createdAt: Date;
