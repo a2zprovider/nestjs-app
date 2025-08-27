@@ -12,4 +12,8 @@ export class CreateOrderAttachmentDto {
   @IsOptional()
   @IsString()
   link: string;
+
+  @IsOptional()
+  @IsString()
+  file: string;
 }

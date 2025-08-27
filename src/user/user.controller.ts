@@ -27,7 +27,7 @@ export class UserController {
   }
 
   @Get()
-  @Roles('admin')
+  @Roles('admin', 'user')
   findAll(
     @Query('search') search?: string,
     @Query('page') page = 1,
@@ -41,6 +41,7 @@ export class UserController {
   }
 
   @Get(':id')
+  @Roles('admin', 'user')
   async findOne(@Param('id') id: number) {
     return this.userService.findOne(id);
   }

@@ -52,7 +52,11 @@ export class UserService {
     }
 
     const user = this.userRepository.create(data);
-    return await this.userRepository.save(user);
+
+    return {
+      message: 'User created successfully',
+      data: await this.userRepository.save(user),
+    };
   }
 
   async findAll({
@@ -117,7 +121,10 @@ export class UserService {
 
     Object.assign(user, data);
 
-    return await this.userRepository.save(user);
+    return {
+      message: 'User updated successfully',
+      data: await this.userRepository.save(user),
+    };
   }
 
   async delete(id: number) {

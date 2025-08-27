@@ -12,8 +12,11 @@ import {
   JoinColumn,
   OneToMany,
   OneToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { OrderChat } from 'src/orderChat/entities/orderchat.entity';
+
 let status = [
   'New Lead', // Lead is newly captured and uncontacted.
   'Contacted', // First call or message made to the lead.
@@ -48,9 +51,9 @@ export class Order {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.orders, { onDelete: 'CASCADE' })
-  @JoinColumn()
-  user: User;
+  @ManyToMany(() => User, (user) => user.orders)
+  @JoinTable()
+  assignedUsers: User[];
 
   @Column({ nullable: true })
   title: string;

@@ -1,4 +1,5 @@
 import { Order } from 'src/order/entities/order.entity';
+import { OrderAttachment } from 'src/orderAttachment/entities/orderattachment.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -6,6 +7,7 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToMany,
 } from 'typeorm';
 
 @Entity()
@@ -34,8 +36,11 @@ export class User {
   @Column({ default: 'active' }) // status: 'active', 'inactive', 'banned', etc.
   status: string;
 
-  @OneToMany(() => Order, (order) => order.user)
+  @ManyToMany(() => Order, (order) => order.assignedUsers)
   orders: Order[];
+
+  @OneToMany(() => OrderAttachment, (orderattachment) => orderattachment.user)
+  orderAttachments: OrderAttachment[];
 
   @CreateDateColumn()
   createdAt: Date;

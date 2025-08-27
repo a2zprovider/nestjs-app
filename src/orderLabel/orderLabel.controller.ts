@@ -21,29 +21,31 @@ export class OrderLabelController {
   constructor(private readonly orderLabelService: OrderLabelService) {}
 
   @Post()
-  @Roles('admin')
+  @Roles('admin', 'user')
   create(@Body() data: CreateOrderLabelDto) {
     return this.orderLabelService.create(data);
   }
 
   @Get()
-  @Roles('admin')
+  @Roles('admin', 'user')
   findAll() {
     return this.orderLabelService.findAll();
   }
 
   @Get(':id')
+  @Roles('admin', 'user')
   async findOne(@Param('id') id: number) {
     return this.orderLabelService.findOne(id);
   }
 
   @Put(':id')
-  @Roles('admin')
+  @Roles('admin', 'user')
   update(@Param('id') id: number, @Body() data: UpdateOrderLabelDto) {
     return this.orderLabelService.update(id, data);
   }
 
   @Delete(':id')
+  @Roles('admin', 'user')
   async delete(@Param('id') id: number) {
     return this.orderLabelService.delete(id);
   }

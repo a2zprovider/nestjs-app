@@ -21,29 +21,31 @@ export class OrderClientController {
   constructor(private readonly orderClientService: OrderClientService) {}
 
   @Post()
-  @Roles('admin')
+  @Roles('admin', 'user')
   create(@Body() data: CreateOrderClientDto) {
     return this.orderClientService.create(data);
   }
 
   @Get()
-  @Roles('admin')
+  @Roles('admin', 'user')
   findAll() {
     return this.orderClientService.findAll();
   }
 
   @Get(':id')
+  @Roles('admin', 'user')
   async findOne(@Param('id') id: number) {
     return this.orderClientService.findOne(id);
   }
 
   @Put(':id')
-  @Roles('admin')
+  @Roles('admin', 'user')
   update(@Param('id') id: number, @Body() data: UpdateOrderClientDto) {
     return this.orderClientService.update(id, data);
   }
 
   @Delete(':id')
+  @Roles('admin', 'user')
   async delete(@Param('id') id: number) {
     return this.orderClientService.delete(id);
   }

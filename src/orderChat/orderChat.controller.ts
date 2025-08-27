@@ -21,29 +21,31 @@ export class OrderChatController {
   constructor(private readonly orderChatService: OrderChatService) {}
 
   @Post()
-  @Roles('admin')
+  @Roles('admin', 'user')
   create(@Body() data: CreateOrderChatDto) {
     return this.orderChatService.create(data);
   }
 
   @Get()
-  @Roles('admin')
+  @Roles('admin', 'user')
   findAll() {
     return this.orderChatService.findAll();
   }
 
   @Get(':id')
+  @Roles('admin', 'user')
   async findOne(@Param('id') id: number) {
     return this.orderChatService.findOne(id);
   }
 
   @Put(':id')
-  @Roles('admin')
+  @Roles('admin', 'user')
   update(@Param('id') id: number, @Body() data: UpdateOrderChatDto) {
     return this.orderChatService.update(id, data);
   }
 
   @Delete(':id')
+  @Roles('admin', 'user')
   async delete(@Param('id') id: number) {
     return this.orderChatService.delete(id);
   }

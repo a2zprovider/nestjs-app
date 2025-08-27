@@ -23,24 +23,25 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Post()
-  @Roles('admin')
+  @Roles('admin', 'user')
   create(@Body() data: CreateOrderDto, @User('id') userId: number) {
     return this.orderService.create(data, userId);
   }
 
   @Get()
-  @Roles('admin')
+  @Roles('admin', 'user')
   findAll(@Query('search') search?: string) {
     return this.orderService.findAll({ search });
   }
 
   @Get(':id')
+  @Roles('admin', 'user')
   async findOne(@Param('id') id: number) {
     return this.orderService.findOne(id);
   }
 
   @Put(':id')
-  @Roles('admin') // or remove this if users can update their own orders
+  @Roles('admin', 'user') // or remove this if users can update their own orders
   update(
     @Param('id') id: number,
     @Body() data: UpdateOrderDto,
@@ -50,6 +51,7 @@ export class OrderController {
   }
 
   @Delete(':id')
+  @Roles('admin', 'user')
   async delete(@Param('id') id: number) {
     return this.orderService.delete(id);
   }

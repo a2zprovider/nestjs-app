@@ -54,4 +54,7 @@ export class CreateOrderDto {
 
   @IsOptional()
   orderClient: any;
+  
+  @IsOptional()
+  assignedUsers: any;
 }

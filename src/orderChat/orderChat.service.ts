@@ -25,7 +25,10 @@ export class OrderChatService {
     }
 
     const orderchat = this.orderChatRepository.create({ ...data, order });
-    return await this.orderChatRepository.save(orderchat);
+    return {
+      message: 'Order chat created successfully',
+      data: await this.orderChatRepository.save(orderchat),
+    };
   }
 
   async findAll() {
@@ -68,7 +71,10 @@ export class OrderChatService {
 
     Object.assign(orderchat, data);
 
-    return await this.orderChatRepository.save(orderchat);
+    return {
+      message: 'Order chat updated successfully',
+      data: await this.orderChatRepository.save(orderchat),
+    };
   }
 
   async delete(id: number) {
@@ -78,6 +84,6 @@ export class OrderChatService {
       throw new NotFoundException(`OrderChat with ID ${id} not found`);
     }
 
-    return { message: 'OrderChat deleted successfully' };
+    return { message: 'Order chat deleted successfully' };
   }
 }

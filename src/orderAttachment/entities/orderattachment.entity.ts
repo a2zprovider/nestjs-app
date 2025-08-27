@@ -1,4 +1,5 @@
 import { Order } from 'src/order/entities/order.entity';
+import { User } from 'src/user/entities/user.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -19,6 +20,12 @@ export class OrderAttachment {
   })
   @JoinColumn()
   order: Order;
+
+  @ManyToOne(() => User, (user) => user.orderAttachments, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  user: User;
 
   @Column({ nullable: true })
   title: string;

@@ -25,7 +25,10 @@ export class OrderLabelService {
     }
 
     const orderlabel = this.orderLabelRepository.create({ ...data, order });
-    return await this.orderLabelRepository.save(orderlabel);
+    return {
+      message: 'Order client created successfully.',
+      data: await this.orderLabelRepository.save(orderlabel),
+    };
   }
 
   async findAll() {
@@ -68,7 +71,10 @@ export class OrderLabelService {
 
     Object.assign(orderlabel, data);
 
-    return await this.orderLabelRepository.save(orderlabel);
+    return {
+      message: 'Order client updated successfully.',
+      data: await this.orderLabelRepository.save(orderlabel),
+    };
   }
 
   async delete(id: number) {
@@ -78,6 +84,6 @@ export class OrderLabelService {
       throw new NotFoundException(`OrderLabel with ID ${id} not found`);
     }
 
-    return { message: 'OrderLabel deleted successfully' };
+    return { message: 'Order label deleted successfully.' };
   }
 }

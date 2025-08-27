@@ -46,7 +46,7 @@ export class OrderService {
 
     const order = this.orderRepository.create({
       ...data,
-      user,
+      assignedUsers: [user],
       pId: nextPId,
       financialYear,
     });
@@ -60,7 +60,7 @@ export class OrderService {
   async findAll({ search }: { search?: string }) {
     const query = this.orderRepository
       .createQueryBuilder('order')
-      .leftJoinAndSelect('order.user', 'user')
+      .leftJoinAndSelect('order.assignedUsers', 'assignedUsers')
       .leftJoinAndSelect('order.orderClient', 'orderClient')
       .leftJoinAndSelect('order.orderLabels', 'orderLabels')
       .leftJoinAndSelect('order.orderAttachments', 'orderAttachments')
@@ -76,6 +76,7 @@ export class OrderService {
         { search: `%${search}%` },
       );
     }
+    query.orderBy('order.createdAt', 'DESC');
 
     return await query.getMany();
   }
@@ -84,10 +85,11 @@ export class OrderService {
     const order = await this.orderRepository.findOne({
       where: { id },
       relations: [
-        'user',
+        'assignedUsers',
         'orderClient',
         'orderLabels',
         'orderAttachments',
+        'orderAttachments.user',
         'orderChats',
       ],
     });
@@ -102,14 +104,15 @@ export class OrderService {
   async update(orderId: number, data: UpdateOrderDto, userId: number) {
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
-      relations: ['user'],
+      relations: ['assignedUsers'],
     });
 
     if (!order) {
       throw new NotFoundException(`Order with ID ${orderId} not found`);
     }
 
-    if (order.user.id !== userId) {
+    const isAssigned = order.assignedUsers.some((u) => u.id === userId);
+    if (!isAssigned) {
       throw new ForbiddenException('You are not allowed to update this order');
     }
 

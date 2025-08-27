@@ -5,6 +5,10 @@ export class CreateOrderChatDto {
   @IsNumber()
   orderId: number;
 
+  @IsOptional()
+  @IsString()
+  type: string;
+
   @IsNotEmpty()
   @IsString()
   message: string;

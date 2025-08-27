@@ -25,7 +25,10 @@ export class OrderClientService {
     }
 
     const orderclient = this.orderClientRepository.create({ ...data, order });
-    return await this.orderClientRepository.save(orderclient);
+    return {
+      message: 'Order client created successfully.',
+      data: await this.orderClientRepository.save(orderclient),
+    };
   }
 
   async findAll() {
@@ -68,7 +71,10 @@ export class OrderClientService {
 
     Object.assign(orderclient, data);
 
-    return await this.orderClientRepository.save(orderclient);
+    return {
+      message: 'Order client updated successfully.',
+      data: await this.orderClientRepository.save(orderclient),
+    };
   }
 
   async delete(id: number) {
@@ -78,6 +84,6 @@ export class OrderClientService {
       throw new NotFoundException(`OrderClient with ID ${id} not found`);
     }
 
-    return { message: 'OrderClient deleted successfully' };
+    return { message: 'Order client deleted successfully.' };
   }
 }

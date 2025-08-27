@@ -14,36 +14,45 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/roles/roles.guard';
 import { CreateOrderAttachmentDto } from './dto/create-orderattachment.dto';
 import { UpdateOrderAttachmentDto } from './dto/update-orderattachment.dto';
+import { User } from 'src/common/decorators/user.decorator';
 
 @Controller('orderattachments')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 export class OrderAttachmentController {
-  constructor(private readonly orderAttachmentService: OrderAttachmentService) {}
+  constructor(
+    private readonly orderAttachmentService: OrderAttachmentService,
+  ) {}
 
   @Post()
-  @Roles('admin')
-  create(@Body() data: CreateOrderAttachmentDto) {
-    return this.orderAttachmentService.create(data);
+  @Roles('admin', 'user')
+  create(@Body() data: CreateOrderAttachmentDto, @User('id') userId: number) {
+    return this.orderAttachmentService.create(data, userId);
   }
 
   @Get()
-  @Roles('admin')
+  @Roles('admin', 'user')
   findAll() {
     return this.orderAttachmentService.findAll();
   }
 
   @Get(':id')
+  @Roles('admin', 'user')
   async findOne(@Param('id') id: number) {
     return this.orderAttachmentService.findOne(id);
   }
 
   @Put(':id')
-  @Roles('admin')
-  update(@Param('id') id: number, @Body() data: UpdateOrderAttachmentDto) {
-    return this.orderAttachmentService.update(id, data);
+  @Roles('admin', 'user')
+  update(
+    @Param('id') id: number,
+    @Body() data: UpdateOrderAttachmentDto,
+    @User('id') userId: number,
+  ) {
+    return this.orderAttachmentService.update(id, data, userId);
   }
 
   @Delete(':id')
+  @Roles('admin', 'user')
   async delete(@Param('id') id: number) {
     return this.orderAttachmentService.delete(id);
   }

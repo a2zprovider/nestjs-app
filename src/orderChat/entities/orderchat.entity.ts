@@ -23,6 +23,9 @@ export class OrderChat {
   @Column()
   message: string;
 
+  @Column({ nullable: true })
+  type: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
