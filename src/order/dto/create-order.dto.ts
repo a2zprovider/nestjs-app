@@ -51,6 +51,9 @@ export class CreateOrderDto {
   
   @IsOptional()
   source: string;
+  
+  @IsOptional()
+  status: string;
 
   @IsOptional()
   orderClient: any;
