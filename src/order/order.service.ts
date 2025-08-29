@@ -57,7 +57,24 @@ export class OrderService {
     };
   }
 
-  async findAll({ search }: { search?: string }) {
+  async findAll({
+    search,
+    startDate,
+    endDate,
+    userId,
+  }: {
+    search?: string;
+    startDate?: string;
+    endDate?: string;
+    userId: number;
+  }) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
     const query = this.orderRepository
       .createQueryBuilder('order')
       .leftJoinAndSelect('order.assignedUsers', 'assignedUsers')
@@ -76,6 +93,18 @@ export class OrderService {
         { search: `%${search}%` },
       );
     }
+
+    if (startDate && endDate) {
+      query.andWhere('order.createdAt BETWEEN :startDate AND :endDate', {
+        startDate: new Date(startDate),
+        endDate: new Date(endDate + 'T23:59:59.999Z'),
+      });
+    }
+
+    if (user.role !== 'admin') {
+      query.andWhere('assignedUsers.id = :userId', { userId: user.id });
+    }
+
     query.orderBy('order.createdAt', 'DESC');
 
     return await query.getMany();

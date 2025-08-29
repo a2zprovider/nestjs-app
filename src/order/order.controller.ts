@@ -30,8 +30,13 @@ export class OrderController {
 
   @Get()
   @Roles('admin', 'user')
-  findAll(@Query('search') search?: string) {
-    return this.orderService.findAll({ search });
+  findAll(
+    @User('id') userId: number,
+    @Query('search') search?: string,
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
+  ) {
+    return this.orderService.findAll({ search, startDate, endDate, userId });
   }
 
   @Get(':id')
